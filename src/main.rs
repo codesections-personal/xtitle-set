@@ -13,5 +13,5 @@ fn main() {
         title = cli.value_of("TITLE").expect("required by clap")
     ))
     .unwrap();
-    println!("{}", out);
+    print!("{}", out);
 }
