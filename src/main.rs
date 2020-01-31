@@ -1,17 +1,23 @@
-use clap::{crate_authors, crate_name, crate_version, App};
-use run_script::run_script;
+use clap::{crate_name, crate_version, App, Arg};
+
 fn main() {
+    #[rustfmt::skip]
     let cli = App::new(crate_name!())
-        .about("Sets the xtitle for a terminal via escape characters.")
+        .about("Set the xtitle for the current terminal via escape characters.")
         .version(crate_version!())
-        .author(crate_authors!())
-        .arg("<TITLE> 'The new xtitle to set for the current terminal'")
+        .arg(Arg::with_name("<TITLE>")
+             .takes_value(true)
+             .help("The new xtitle to set for the current terminal")             
+             .required_unless("src"))
+        .arg(Arg::from("--src 'Prints this program's source to stdout'"))
         .get_matches();
 
-    let (_, out, _) = run_script!(format!(
-        r#"[ $(uname -s) = Linux ] && exec echo -e "\033]1;{title}\007\033]2;{title}\007\c""#,
-        title = cli.value_of("TITLE").expect("required by clap")
-    ))
-    .unwrap();
-    print!("{}", out);
+    if cli.is_present("src") {
+        print!("/// main.rs\n{}", include_str!("main.rs"));
+    } else {
+        print!(
+            "\u{1b}]1;{title}\u{7}\u{1b}]2;{title}\u{7}",
+            title = cli.value_of("TITLE").expect("required by clap")
+        );
+    }
 }

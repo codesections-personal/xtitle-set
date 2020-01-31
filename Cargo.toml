@@ -8,5 +8,7 @@ license = "GPL-3.0-or-later"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-run_script = "0.3.2"
 clap = { git = "https://github.com/clap-rs/clap" }
+
+[profile.release]
+lto = true
